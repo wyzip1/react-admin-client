@@ -1,4 +1,4 @@
-import Main from './views/main'
+import Main from './views/Main'
 import Login from './views/Login'
 
 export const routes = [

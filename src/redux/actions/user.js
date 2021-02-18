@@ -1,0 +1,1 @@
+export const loginUser = data => ({ type: 'userInfo', data });

@@ -1,4 +1,8 @@
-import { createStore } from 'redux'
-import { composeWithDevTools } from 'redux-devtools-extension'
+// import { createStore, combineReducers } from 'redux'
+// import reducers from './reducers'
+// import { composeWithDevTools } from 'redux-devtools-extension'
 
-export default createStore(composeWithDevTools());
+// export default createStore(
+//     combineReducers(reducers),
+//     composeWithDevTools()
+// );

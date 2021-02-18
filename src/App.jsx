@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom'
 import { routes } from './router'
 
@@ -8,13 +7,11 @@ function routesMap() {
 }
 
 function App({ location: { pathname }, history: { replace } }) {
-    let _token = localStorage.getItem('token');
-    const [token, setToken] = useState(_token);
+    let _token = sessionStorage.getItem('token');
+    if (!_token && pathname !== '/login') {
+        replace('/login');
+    }
     let routesRender = routesMap();
-    useEffect(() => {
-        if (pathname !== '/login' && !token)
-            replace('/login');
-    }, [token]);
     return (
         <main>
             <Switch>
