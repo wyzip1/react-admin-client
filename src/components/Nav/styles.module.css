@@ -1,0 +1,35 @@
+.leftNav img {
+    width: 20%;
+    min-width: 45px;
+}
+
+.leftNav .logo {
+    height: 110px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-bottom: 1px solid var(--antd-wave-shadow-color);
+}
+
+.leftNav .logo h1 {
+    margin: 0;
+    font-size: 30px;
+    white-space: nowrap;
+    transition: .3s;
+    text-overflow: ellipsis;
+}
+
+.hide {
+    opacity: 0;
+    position: absolute;
+}
+
+.collapseBtn {
+    margin: 10px 0;
+    transition: .3s;
+}
+
+.auto {
+    margin: 10px 50%;
+    transform: translateX(-50%);
+}

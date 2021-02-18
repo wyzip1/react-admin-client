@@ -1,0 +1,45 @@
+.height-100 {
+    height: 100vh;
+}
+
+.bg-unset {
+    background: unset;
+}
+
+.bg-white {
+    background-color: #e8eff3;
+}
+
+.bd {
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.h-1 {
+    height: 75px;
+}
+
+.content {
+    display: grid;
+    padding: 20px 20px 5px;
+    box-sizing: border-box
+}
+
+.content main {
+    margin: auto;
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 5px #00000033;
+    padding: 20px;
+}
+
+.footer {
+    text-align: center;
+    color: #ccc
+}

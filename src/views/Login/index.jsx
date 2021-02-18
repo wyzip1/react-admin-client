@@ -7,7 +7,7 @@ import axios from 'axios'
 // import { connect } from 'react-redux'
 // import { loginUser } from '../../redux/actions/user'
 
-export default function Login({ history: { push } }) {
+export default function Login({ history: { replace } }) {
     let isRequest = false;
     function onFinish(values) {
         if (isRequest) return message.info('请求过于频繁');
@@ -23,7 +23,7 @@ export default function Login({ history: { push } }) {
             sessionStorage.setItem('token', meta.token);
             sessionStorage.setItem('user', JSON.stringify(meta.user));
             // loginUser(meta.user);
-            push('/');
+            replace('/');
         }).catch(err => {
             isRequest = false;
             message.error(err.message);
