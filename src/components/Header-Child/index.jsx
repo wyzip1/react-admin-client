@@ -30,6 +30,8 @@ function Index({ history: { replace, listen }, location: { pathname } }) {
         const nowTime = () => moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
         // 初始化部分状态值
         if (pathname !== '/login') {
+            pathname = pathname === '/shopping' ? '/shopping/category' :
+                pathname === '/chart' ? '/chart/barchart' : pathname;
             setTime(nowTime());
             setPage(activePage(pathname));
         }

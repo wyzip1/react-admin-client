@@ -9,6 +9,8 @@ import logo from '../../asset/logo.svg'
 
 
 export default function Nav({ collapsed, setCollapsed, path }) {
+    path = path === '/shopping' ? '/shopping/category' :
+        path === '/chart' ? '/chart/barchart' : path;
     // 找出有二级菜单的 key
     const hasChild = nav.filter(({ children }) => children ? true : false).map(item => item.key);
     // 递归渲染左侧菜单

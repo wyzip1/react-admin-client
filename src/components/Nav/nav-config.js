@@ -19,7 +19,7 @@ export const nav = [
         children: [
             {
                 title: '品类管理',
-                key: '/shopping/class',
+                key: '/shopping/category',
                 icon: <UnorderedListOutlined />
             },
             {
