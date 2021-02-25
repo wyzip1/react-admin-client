@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './styles.module.css'
 import Logo from '../../asset/logo.svg'
 import { Form, Input, Button, message } from 'antd'
@@ -8,26 +8,26 @@ import axios from 'axios'
 // import { loginUser } from '../../redux/actions/user'
 
 export default function Login({ history: { replace } }) {
-    let isRequest = false;
+    const [loading, setLoading] = useState(false)
     function onFinish(values) {
-        if (isRequest) return message.info('请求过于频繁');
-        // 开启登录请求
-        isRequest = true;
-        axios.post('/login', values).then(({ data: { status, meta } }) => {
-            // 登录请求结束
-            isRequest = false;
-            // 登陆失败
-            if (status !== 0) return message.warning(meta.msg);
-            // 登录成功
-            message.success(meta.msg);
-            sessionStorage.setItem('token', meta.token);
-            sessionStorage.setItem('user', JSON.stringify(meta.user));
-            // loginUser(meta.user);
-            replace('/');
-        }).catch(err => {
-            isRequest = false;
-            message.error(err.message);
-        })
+        setLoading(true);
+        setTimeout(() => {
+            axios.post('/login', values).then(({ data: { status, meta } }) => {
+                // 登录请求结束
+                setLoading(false);
+                // 登陆失败
+                if (status !== 0) return message.warning(meta.msg);
+                // 登录成功
+                message.success(meta.msg);
+                sessionStorage.setItem('token', meta.token);
+                sessionStorage.setItem('user', JSON.stringify(meta.user));
+                // loginUser(meta.user);
+                replace('/');
+            }).catch(err => {
+                setLoading(false);
+                message.error(err.message);
+            })
+        }, 500);
     }
     // 统一验证完毕出错时的函数
     function onFinishFailed({ errorFields }) {
@@ -66,7 +66,7 @@ export default function Login({ history: { replace } }) {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" block className="login-form-button">
+                    <Button loading={loading} type="primary" htmlType="submit" block className="login-form-button">
                         Log in
                     </Button>
                 </Form.Item>

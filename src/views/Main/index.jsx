@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Layout } from 'antd'
+import { Layout, Spin } from 'antd'
 import Nav from '../../components/Nav'
 import HeaderChild from '../../components/Header-Child'
 import ContentChild from '../../components/content-child'

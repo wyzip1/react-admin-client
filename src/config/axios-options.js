@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://localhost:3000/manager'
+axios.defaults.baseURL = '/manager'
 
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {

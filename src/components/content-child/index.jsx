@@ -7,7 +7,7 @@ export default function index() {
         <main>
             <Switch>
                 {routes.map(({ path, component }, index) =>
-                    <Route key={index} path={path} component={component}></Route>)}
+                    <Route key={index} path={path} component={component} />)}
             </Switch>
         </main>
     )

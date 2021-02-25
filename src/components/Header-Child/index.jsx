@@ -29,33 +29,27 @@ function Index({ history: { replace, listen }, location: { pathname } }) {
         // 使用 moment 插件对 Date.now()获取的当前时间戳进行日期格式化
         const nowTime = () => moment(Date.now()).format('YYYY-MM-DD HH:mm:ss');
         // 初始化部分状态值
-        if (pathname !== '/login') {
-            pathname = pathname === '/shopping' ? '/shopping/category' :
-                pathname === '/chart' ? '/chart/barchart' : pathname;
-            setTime(nowTime());
-            setPage(activePage(pathname));
-        }
+        pathname = pathname === '/shopping' ? '/shopping/category' :
+            pathname === '/chart' ? '/chart/barchart' :
+                pathname === '/shopping/addAndUpdate' ? '/shopping/goods' : pathname;
+        setTime(nowTime());
+        setPage(activePage(pathname));
         // 定时更改 hooks 状态的 time 值
         const getTime = setInterval(() => { setTime(nowTime()) }, 1000);
-        let getWeather, isGet = false;
-        if (!weather.weather) getWeather = setInterval(() => {
-            if (!isGet) {
-                isGet = true;
-                axios.get('/weather').then(res => {
-                    if (res.data.status === 0) {
-                        clearInterval(getWeather);
-                        setWeather(res.data.lives[0]);
-                    } else isGet = false;
-                });
-            }
-        }, 800);
+        // 具备token时发起天气请求
+        if (sessionStorage.getItem('token')) {
+            axios.get('/weather').then(res => {
+                if (res.data.status === 0)
+                    return setWeather(res.data.lives[0])
+            }).catch(err => console.log(err));
+        }
         let unlisten = listen(({ pathname }) => {
-            setPage(activePage(pathname));
+            let path = pathname === '/shopping/addAndUpdate' ? '/shopping/goods' : pathname;
+            setPage(activePage(path));
         })
         return () => {
             unlisten();
             clearInterval(getTime);
-            clearInterval(getWeather);
         }
     }, [])
 
