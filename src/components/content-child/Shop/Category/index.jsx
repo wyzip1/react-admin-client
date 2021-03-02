@@ -102,7 +102,7 @@ export default function Index() {
         { title: '分类名称', dataIndex: 'name', key: 'name' },
         {
             title: '操作',
-            width: 300,
+            width: 300, align: 'center',
             render: (data) => {
                 return (
                     <div>
@@ -142,7 +142,6 @@ export default function Index() {
     return (
         <div style={{ height: '100%' }}>
             <Card
-                style={{ height: '100%', padding: '40px', overflow: 'auto', border: 0 }}
                 title={<Breadcrumb list={lvlist} changeList={changeList} />}
                 extra={<Button type="primary" icon={<PlusOutlined />} onClick={() => setVisible(true)}>添加</Button>} >
                 <Table columns={columns} bordered dataSource={tableData} rowKey="_id" loading={tableLoading} />

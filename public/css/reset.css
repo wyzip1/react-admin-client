@@ -9,5 +9,23 @@
 }
 
 ::-webkit-scrollbar {
-    width: 1px;
+    width: 5px;
+    height: 5px;
+}
+
+.ant-card{
+    height: 100%;
+    padding: 40px;
+    overflow: auto;
+    border: 0px;
+    width: 100%;
+}
+
+.ant-spin-nested-loading,
+.ant-spin-container{
+    height: 100%;
+}
+
+.public-DraftStyleDefault-block{
+    margin: 0 !important;
 }

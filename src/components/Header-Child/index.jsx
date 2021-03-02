@@ -31,7 +31,7 @@ function Index({ history: { replace, listen }, location: { pathname } }) {
         // 初始化部分状态值
         pathname = pathname === '/shopping' ? '/shopping/category' :
             pathname === '/chart' ? '/chart/barchart' :
-                pathname === '/shopping/addAndUpdate' ? '/shopping/goods' : pathname;
+                pathname === '/shopping/add' || pathname === '/shopping/update' ? '/shopping/goods' : pathname;
         setTime(nowTime());
         setPage(activePage(pathname));
         // 定时更改 hooks 状态的 time 值
@@ -44,7 +44,7 @@ function Index({ history: { replace, listen }, location: { pathname } }) {
             }).catch(err => console.log(err));
         }
         let unlisten = listen(({ pathname }) => {
-            let path = pathname === '/shopping/addAndUpdate' ? '/shopping/goods' : pathname;
+            let path = pathname === '/shopping/add' || pathname === '/shopping/update' ? '/shopping/goods' : pathname;
             setPage(activePage(path));
         })
         return () => {

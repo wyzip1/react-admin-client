@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { Layout, Spin } from 'antd'
+import { Layout } from 'antd'
 import Nav from '../../components/Nav'
 import HeaderChild from '../../components/Header-Child'
 import ContentChild from '../../components/content-child'
 import styles from './styles.module.css'
-// import { connect } from 'react-redux'
 
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -27,9 +26,5 @@ export default function Main({ location: { pathname } }) {
         </Layout>
     )
 }
-
-// export default connect(
-//     state => ({ user: state.user })
-// )(Main);
 
 
