@@ -1,8 +1,29 @@
 import React, { Component, createRef } from 'react'
-import { Card, Button, Form, Input, Cascader, message, Upload, Spin } from 'antd'
+import { Card, Button, Form, Input, Cascader, message, Upload, Spin, Modal } from 'antd'
 import RichTextEditor from '../RichTextEditor'
 import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons'
 import axios from 'axios'
+
+// 获取文件base64编码
+function getBase64(file) {
+    return new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => res(reader.result);
+        reader.onerror = err => rej(err)
+    })
+}
+// 二进制转换
+const dataUrlToBlob = (dataurl) => {
+    let arr = dataurl.split(',')
+    let data = window.atob(arr[1])
+    let mime = arr[0].match(/:(.*?);/)[1]
+    let ia = new Uint8Array(data.length)
+    for (var i = 0; i < data.length; i++) {
+        ia[i] = data.charCodeAt(i)
+    }
+    return new Blob([ia], { type: mime })
+}
 
 export default class AddAndUpdate extends Component {
     state = {
@@ -12,7 +33,10 @@ export default class AddAndUpdate extends Component {
         submitLoading: false,
         checkValue: [],
         form: createRef(),
-        richTextEditor: createRef()
+        richTextEditor: createRef(),
+        previewImg: '',
+        previewVisible: false,
+        previewTitle: ''
     }
 
     getOptions = () => {
@@ -46,24 +70,31 @@ export default class AddAndUpdate extends Component {
         this.setState({ content })
     }
 
-    submit = async ({ goodsName, goodsDesc, goodsPrice }) => {
-        const dataUrlToBlob = (dataurl) => {
-            let arr = dataurl.split(',')
-            let data = window.atob(arr[1])
-            let mime = arr[0].match(/:(.*?);/)[1]
-            let ia = new Uint8Array(data.length)
-            for (var i = 0; i < data.length; i++) {
-                ia[i] = data.charCodeAt(i)
-            }
-            return new Blob([ia], { type: mime })
+    onPreview = async file => {
+        let previewImg, previewTitle;
+        if (file.restName) {
+            previewTitle = file.restName;
+            previewImg = '/upload/' + file.restName;
+
+        } else {
+            if (!file.preview)
+                file.preview = await getBase64(file.originFileObj);
+            previewTitle = file.name;
+            previewImg = file.preview;
         }
+        this.setState({ previewImg, previewTitle, previewVisible: true });
+
+    }
+
+    submit = async ({ goodsName, goodsDesc, goodsPrice }) => {
+
         try {
             const { content, fileList, checkValue } = this.state;
             this.setState({ submitLoading: true });
             const uploadImgs = [];
             for (let i of fileList) {
                 let formData = new FormData();
-                formData.append('avatar', dataUrlToBlob(i.thumbUrl), i.name);
+                formData.append('avatar', dataUrlToBlob(await getBase64(i.originFileObj)), i.name);
                 let data = await axios.post('/uploadImg', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
                 uploadImgs.push(data.data);
             }
@@ -92,7 +123,11 @@ export default class AddAndUpdate extends Component {
 
 
     render() {
-        const { options, fileList, submitLoading, checkValue, richTextEditor } = this.state;
+        const {
+            options, fileList, submitLoading,
+            checkValue, richTextEditor, previewImg,
+            previewTitle, previewVisible
+        } = this.state;
         const layout = {
             labelCol: { span: 2 },
             wrapperCol: { span: 8 }
@@ -143,6 +178,7 @@ export default class AddAndUpdate extends Component {
                                 action="/manager/uploadImg"
                                 onChange={this.changeImg}
                                 beforeUpload={() => false}
+                                onPreview={this.onPreview}
                             >
                                 {fileList.length >= 3 ? null : uploadButton}
                             </Upload>
@@ -155,6 +191,9 @@ export default class AddAndUpdate extends Component {
                         </Form.Item>
                     </Form>
                 </Card>
+                <Modal footer={null} visible={previewVisible} title={previewTitle} onCancel={() => { this.setState({ previewVisible: false }) }}>
+                    <img src={previewImg} style={{ width: '100%' }} alt="example" />
+                </Modal>
             </Spin>
         )
     }

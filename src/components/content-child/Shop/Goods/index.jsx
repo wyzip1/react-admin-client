@@ -11,7 +11,7 @@ export default function Index({ history: { push } }) {
     const [total, setTotal] = useState(0);
     const [searchLoading, setSearchLoading] = useState(false);
     const [detail, setDetail] = useState(false);
-    const [content, setContent] = useState()
+    const [content, setContent] = useState();
     const columns = [
         { title: '商品名称', dataIndex: 'name', key: 'name', width: 200, ellipsis: true, fixed: 'left' },
         { title: '商品描述', dataIndex: 'desc', key: 'desc', ellipsis: true },
@@ -112,12 +112,12 @@ export default function Index({ history: { push } }) {
         }
     }
 
-    function onShowSizeChange(pageNum, size) {
-        getData({ pageNum, size });
+    function onShowSizeChange(pageNum, pageSize) {
+        getData({ pageNum, pageSize });
     }
 
-    function changePage(pageNum, size) {
-        getData({ pageNum, size });
+    function changePage(pageNum, pageSize) {
+        getData({ pageNum, pageSize });
     }
 
 
