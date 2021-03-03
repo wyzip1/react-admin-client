@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Search from './Search'
-import { Card, Button, Table, message, Switch, Modal, Popconfirm } from 'antd'
+import { Card, Button, Table, message, Switch, Modal } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import axios from 'axios'
 
@@ -34,14 +34,7 @@ export default function Index({ history: { push } }) {
                             push({ pathname: '/shopping/update', state: { ...state } })
                         }}>修改</Button>
                         <Button type="link" onClick={() => { setContent(state.detail); setDetail(true); }}>详情</Button>
-                        <Popconfirm
-                            title={`确认要删除【${state.name}】商品么`}
-                            okText="确认" cancelText="取消"
-                            cancelButtonProps={{ type: "danger" }}
-                            placement="topLeft" onConfirm={dc(state)}
-                        >
-                            <Button type="danger">删除</Button>
-                        </Popconfirm>
+                        <Button type="danger" onClick={() => { showDelConfirm(state) }}>删除</Button>
                     </div >
                 )
             }
@@ -73,6 +66,16 @@ export default function Index({ history: { push } }) {
                 rej(err.message);
             })
         })
+    }
+
+    // 显示删除商品的确认模态框
+    function showDelConfirm(state) {
+        Modal.confirm({
+            title: `确认要删除【${state.name}】商品么`,
+            okText: "确认", cancelText: "取消",
+            cancelButtonProps: { type: "danger" },
+            onOk: dc(state)
+        });
     }
 
     // 删除此商品
