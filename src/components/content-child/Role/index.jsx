@@ -18,9 +18,13 @@ export default function Role() {
     const [authFrom] = Form.useForm();
     const [roleInfo, setRoleInfo] = useState({});
     const [auths, setauths] = useState([]);
-    const [putLoading, setPutLoading] = useState(false)
-
-
+    const [putLoading, setPutLoading] = useState(false);
+    const [putNLoading, setPutNLoading] = useState(false);
+    const [updNameModal, setUpdNameModal] = useState(false);
+    const [nameForm] = Form.useForm();
+    const [nRoleInfo, setNRoleInfo] = useState();
+    const [pageSize, setPageSize] = useState(5);
+    const [pageNum, setPageNum] = useState(1);
     const columns = [
         { title: '角色名称', dataIndex: 'name', key: 'name' },
         {
@@ -35,10 +39,19 @@ export default function Role() {
         {
             title: '操作', align: 'center', width: '200px',
             render: state => {
-                return <div>
-                    <Button type="primary" style={{ marginRight: '10px' }}>修改</Button>
-                    <Button type="danger" onClick={() => { showdelConfirm(state) }}>删除</Button>
-                </div>
+                // state.name === 'admin' ? null : 
+                return (
+                    <div>
+                        <Button type="primary" onClick={() => {
+                            setNRoleInfo(state);
+                            setTimeout(() => {
+                                setUpdNameModal(true);
+                                nameForm.resetFields();
+                            }, 10);
+                        }} style={{ marginRight: '10px' }}>修改</Button>
+                        <Button type="danger" onClick={() => { showdelConfirm(state) }}>删除</Button>
+                    </div>
+                )
             }
         },
     ];
@@ -53,11 +66,13 @@ export default function Role() {
                     cancel = c;
                 })
             }
-        ).then(({ data: { status, meta: { msg, data, total } } }) => {
+        ).then(({ data: { status, meta: { msg, data, total, pageNum, pageSize } } }) => {
             setSearchLoading(false);
             if (status) return message.warn(msg);
             setData(data);
             setTotal(total);
+            setPageNum(pageNum);
+            setPageSize(pageSize);
         }).catch(err => {
             if (axios.isCancel(err)) {
                 console.log('Request canceled ' + err.message);
@@ -83,7 +98,7 @@ export default function Role() {
             message.success(msg);
             setCreateRole(false);
             createForm.resetFields();
-            getData({});
+            getData({ pageSize });
         }).catch(err => {
             setPcLoading(false);
             console.log('添加角色错误：', err);
@@ -112,7 +127,11 @@ export default function Role() {
                         return rej();
                     }
                     message.success(msg);
-                    getData({});
+                    if (data._id === roleInfo._id) {
+                        setauths([]);
+                        setRoleInfo({});
+                    }
+                    getData({ pageNum, pageSize });
                     res();
                 }).catch(err => {
                     console.log('删除角色失败：', err);
@@ -141,12 +160,29 @@ export default function Role() {
             if (status) return message.warn(msg);
             message.success(msg);
             setAuthModal(false);
-            getData({});
+            getData({ pageSize, pageNum });
         }).catch(err => {
             setPutLoading(false);
             console.log('修改角色权限失败：', err);
             message.error(err.message);
         });
+    }
+
+    async function putName({ name }) {
+        setPutNLoading(true);
+        try {
+            const { data: { status, meta: { msg, data } } } =
+                await axios.put('/role/update', { id: nRoleInfo._id, name });
+            setPutNLoading(false);
+            if (status) return message.warn(msg);
+            setUpdNameModal(false);
+            message.success(msg);
+            getData({ pageSize, pageNum });
+        } catch (err) {
+            setPutNLoading(false);
+            message.error(err.message);
+            console.log('角色名称修改失败', err)
+        }
     }
 
     useEffect(() => {
@@ -160,10 +196,14 @@ export default function Role() {
             <div>
                 <Button type="primary" style={{ marginRight: '10px' }} onClick={() => { setCreateRole(true) }}>创建角色</Button>
                 <Button type="primary" style={{ marginRight: '10px' }} onClick={() => {
-                    if (roleInfo.name) { authFrom.resetFields(); setAuthModal(true); }
-                    else message.warn('请选择需要设置权限的角色');
+                    if (roleInfo.name) {
+                        setAuthModal(true);
+                        setTimeout(() => {
+                            authFrom.resetFields();
+                        }, 10)
+                    } else message.warn('请选择需要设置权限的角色');
                 }}>设置角色权限</Button>
-                <Button loading={searhLoading} onClick={() => { getData({}) }}>刷新列表</Button>
+                <Button loading={searhLoading} onClick={() => { getData({ pageSize, pageNum }) }}>刷新列表</Button>
             </div>
         }>
             <Table
@@ -171,10 +211,15 @@ export default function Role() {
                 columns={columns}
                 dataSource={data}
                 bordered rowKey="_id"
-                rowSelection={{ type: 'radio', columnWidth: '80px', onSelect: changeRoleInfo }}
+                rowSelection={{
+                    type: 'radio',
+                    columnWidth: '80px',
+                    onSelect: changeRoleInfo
+                }}
                 pagination={{
                     total: total,
                     showSizeChanger: true,
+                    current: parseInt(pageNum),
                     defaultPageSize: 5,
                     pageSizeOptions: [5, 10, 15],
                     onShowSizeChange: change,
@@ -212,6 +257,18 @@ export default function Role() {
                     </Form.Item>
                 </Form>
             </Modal>
-        </Card>
+            <Modal
+                visible={updNameModal} cancelText="取消" onOk={() => { nameForm.submit(); }}
+                title="更新角色名称" okText="确定" cancelButtonProps={{ type: 'danger' }}
+                confirmLoading={putNLoading} onCancel={() => { setUpdNameModal(false); }}
+            >
+                <Form form={nameForm} onFinish={putName}>
+                    <Form.Item label="角色名称" name="name" initialValue={nRoleInfo ? nRoleInfo.name : ''}
+                        rules={[{ required: true, message: '请输入新的角色名称' }]}>
+                        <Input />
+                    </Form.Item>
+                </Form>
+            </Modal>
+        </Card >
     )
 }
