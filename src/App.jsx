@@ -7,15 +7,18 @@ function routesMap() {
 }
 
 function App({ location: { pathname }, history: { replace } }) {
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    const authurls = user ? user.role : null;
     let _token = sessionStorage.getItem('token');
     if (!_token && pathname !== '/login') {
         replace('/login');
+    } else if (pathname !== '/' && pathname !== '/login' && (!authurls || !authurls.includes(pathname))) {
+        replace('/');
     }
-    let routesRender = routesMap();
     return (
         <main>
             <Switch>
-                {routesRender}
+                {routesMap()}
             </Switch>
         </main>
     );

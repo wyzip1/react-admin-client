@@ -24,7 +24,7 @@ const dataUrlToBlob = (dataurl) => {
     }
     return new Blob([ia], { type: mime })
 }
-
+let g;
 export default class AddAndUpdate extends Component {
     state = {
         options: [],
@@ -58,6 +58,7 @@ export default class AddAndUpdate extends Component {
 
     componentDidMount() {
         this.getOptions();
+        this.state.richTextEditor.current.onEmptyEditor();
     }
 
     changeImg = ({ file, fileList }) => {

@@ -7,19 +7,23 @@ import { nav } from './nav-config'
 import styles from './styles.module.css'
 import logo from '../../asset/logo.svg'
 
-
 export default function Nav({ collapsed, setCollapsed, path }) {
     path = path === '/shopping' ? '/shopping/category' :
         path === '/chart' ? '/chart/barchart' :
             path === '/shopping/addAndUpdate' ? '/shopping/goods' : path;
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    const authurls = user ? user.role : null;
     // 找出有二级菜单的 key
     const hasChild = nav.filter(({ children }) => children ? true : false).map(item => item.key);
     // 递归渲染左侧菜单
-    const menuItem = ({ title, key, icon, children }) => !children ?
-        (<Menu.Item key={key} icon={icon}><Link to={key}>{title}</Link></Menu.Item>) :
-        (<Menu.SubMenu key={key} icon={icon} title={title}>
-            {children.map(menuItem)}
-        </Menu.SubMenu>)
+    function menuItem({ title, key, icon, children }) {
+        if (authurls && authurls.includes(key) || key === '/') {
+            if (!children) return (<Menu.Item key={key} icon={icon}><Link to={key}>{title}</Link></Menu.Item>);
+            else return (<Menu.SubMenu key={key} icon={icon} title={title}>
+                {children.map(menuItem)}
+            </Menu.SubMenu>);
+        }
+    }
 
     return (
         <div className={styles.leftNav}>

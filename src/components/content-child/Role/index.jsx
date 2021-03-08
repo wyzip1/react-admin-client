@@ -39,17 +39,17 @@ export default function Role() {
         {
             title: '操作', align: 'center', width: '200px',
             render: state => {
-                // state.name === 'admin' ? null : 
+                const isRoot = state.auth_id === 'init';
                 return (
                     <div>
-                        <Button type="primary" onClick={() => {
+                        <Button type="primary" disabled={isRoot} onClick={() => {
                             setNRoleInfo(state);
                             setTimeout(() => {
                                 setUpdNameModal(true);
                                 nameForm.resetFields();
                             }, 10);
                         }} style={{ marginRight: '10px' }}>修改</Button>
-                        <Button type="danger" onClick={() => { showdelConfirm(state) }}>删除</Button>
+                        <Button type="danger" disabled={isRoot} onClick={() => { showdelConfirm(state) }}>删除</Button>
                     </div>
                 )
             }
@@ -74,9 +74,7 @@ export default function Role() {
             setPageNum(pageNum);
             setPageSize(pageSize);
         }).catch(err => {
-            if (axios.isCancel(err)) {
-                console.log('Request canceled ' + err.message);
-            } else {
+            if (!axios.isCancel(err)) {
                 console.log('查询角色列表失败：', err);
                 message.error(err.message);
                 setSearchLoading(false);
@@ -144,7 +142,13 @@ export default function Role() {
 
     function changeRoleInfo(roleInfo) {
         setRoleInfo(roleInfo);
-        setauths(roleInfo.menus)
+        if (roleInfo.menus.includes('/shopping/add')) {
+            let i1 = roleInfo.menus.indexOf('/shopping/add');
+            roleInfo.menus.splice(i1, 1);
+            let i2 = roleInfo.menus.indexOf('/shopping/update');
+            roleInfo.menus.splice(i2, 1);
+            setauths(roleInfo.menus);
+        } else setauths(roleInfo.menus);
     }
 
     function changeAuth(keys) {
@@ -152,9 +156,14 @@ export default function Role() {
     }
 
     function putAuth() {
+        const { username, _id } = JSON.parse(sessionStorage.getItem('user'));
+        let menus;
+        if (auths.includes('/shopping/goods')) {
+            menus = [...auths, '/shopping/add', '/shopping/update']
+        } else menus = auths;
         setPutLoading(true);
         axios.put('/role/update',
-            { id: roleInfo._id, menus: auths, auth_name: JSON.parse(sessionStorage.getItem('user')).username }
+            { id: roleInfo._id, menus, auth_name: username, auth_id: _id }
         ).then(({ data: { status, meta: { msg, data } } }) => {
             setPutLoading(false);
             if (status) return message.warn(msg);
@@ -214,7 +223,8 @@ export default function Role() {
                 rowSelection={{
                     type: 'radio',
                     columnWidth: '80px',
-                    onSelect: changeRoleInfo
+                    onSelect: changeRoleInfo,
+                    getCheckboxProps: a => ({ disabled: a.auth_id === 'init' })
                 }}
                 pagination={{
                     total: total,

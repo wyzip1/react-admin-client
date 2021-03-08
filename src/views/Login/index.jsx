@@ -12,7 +12,7 @@ export default function Login({ history: { replace } }) {
     function onFinish(values) {
         setLoading(true);
         setTimeout(() => {
-            axios.post('/login', values).then(({ data: { status, meta } }) => {
+            axios.post('/login', values).then(({ data: { status, meta }, data }) => {
                 // 登录请求结束
                 setLoading(false);
                 // 登陆失败
@@ -52,7 +52,7 @@ export default function Login({ history: { replace } }) {
                     name="username"
                     rules={[
                         { required: true, message: '请输入用户名' },
-                        { min: 4, max: 18, message: '请输入长度4-18的用户名', validateTrigger: 'onChange' }
+                        { min: 3, max: 18, message: '请输入长度3-18的用户名', validateTrigger: 'onChange' }
                     ]}>
                     <Input autoComplete="off" prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
                 </Form.Item>

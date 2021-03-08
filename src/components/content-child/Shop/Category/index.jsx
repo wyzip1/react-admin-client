@@ -31,9 +31,7 @@ export default function Index() {
             if (res.data.status !== 0) return message.warn(res.data.meta.msg)
             setTableData(res.data.meta.data);
         }).catch(err => {
-            if (axios.isCancel(err)) {
-                console.log('Request canceled', err.message);
-            } else {
+            if (!axios.isCancel(err)) {
                 setTableLoading(false);
                 console.log('获取分类列表错误：', err);
                 message.error(err.message);

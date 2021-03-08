@@ -1,7 +1,48 @@
-.home {
-    width: 100%;
-    height: 100%;
+.home{
+    padding: 20px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    height: 100%;
+}
+
+.shopping{
+    width: 300px;
+}
+
+.shoppingCount{
+    display: flex;
     align-items: center;
+}
+
+.shoppingCount h1{
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.up svg{
+    fill: #66cc99;
+}
+
+.down svg{
+    fill: #ff4d4f
+}
+
+.echart1{
+    width: calc(90% - 300px);
+}
+
+.echart1,
+.shopping{
+    height: 210px !important;
+}
+
+.xb{
+    margin-top: 45px;
+    height: 48.5vh;
+}
+
+.xbContent{
+    display: flex;
+    justify-content: space-around;
 }

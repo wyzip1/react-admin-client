@@ -26,6 +26,10 @@
     height: 100%;
 }
 
+.ant-tabs-nav{
+    margin: 0 !important;
+}
+
 .public-DraftStyleDefault-block{
     margin: 0 !important;
 }

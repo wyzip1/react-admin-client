@@ -8,12 +8,14 @@ import { withRouter } from 'react-router-dom'
 import { nav } from '../Nav/nav-config.js'
 import logo from '../../asset/logo.png'
 
+
 function Index({ history: { replace, listen }, location: { pathname } }) {
     const user = JSON.parse(sessionStorage.getItem('user'));
     // 使用 hooks 存储状态
     const [time, setTime] = useState();
     const [weather, setWeather] = useState({});
     const [page, setPage] = useState('首页');
+
     // 不监听任何值
     useEffect(() => {
         // 获取当前页面标题

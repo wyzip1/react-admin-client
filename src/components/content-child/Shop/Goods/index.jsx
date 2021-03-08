@@ -12,6 +12,8 @@ export default function Index({ history: { push } }) {
     const [searchLoading, setSearchLoading] = useState(false);
     const [detail, setDetail] = useState(false);
     const [content, setContent] = useState();
+    const [pageNum, setPageNum] = useState();
+    const [pageSize, setPageSize] = useState();
     const columns = [
         { title: '商品名称', dataIndex: 'name', key: 'name', width: 200, ellipsis: true, fixed: 'left' },
         { title: '商品描述', dataIndex: 'desc', key: 'desc', ellipsis: true },
@@ -51,19 +53,22 @@ export default function Index({ history: { push } }) {
                         cancel = c;
                     })
                 }
-            ).then(({ data: { status, meta: { msg, data, total, pages } } }) => {
+            ).then(({ data: { status, meta: { msg, data, total, pageNum, pageSize } } }) => {
                 setSearchLoading(false);
                 // 数据请求异常
                 if (status) return rej(msg);
                 // 数据请求成功
                 res(msg);
+                setPageNum(pageNum);
+                setPageSize(pageSize);
                 setShopData(data);
                 setTotal(total);
             }).catch(err => {
-                if (axios.isCancel(err)) return console.log('Request canceled', err.message);
-                setSearchLoading(false);
-                console.log('获取商品信息错误：', err);
-                rej(err.message);
+                if (!axios.isCancel(err)) {
+                    setSearchLoading(false);
+                    console.log('获取商品信息错误：', err);
+                    rej(err.message);
+                }
             })
         })
     }
@@ -90,7 +95,7 @@ export default function Index({ history: { push } }) {
                         return rej();
                     }
                     message.success(msg);
-                    getData({});
+                    getData({ pageNum, pageSize });
                     res();
                 }).catch(err => {
                     message.error(err.message);
@@ -144,7 +149,8 @@ export default function Index({ history: { push } }) {
                 <Table
                     pagination={{
                         pageSizeOptions: [5, 10, 15],
-                        defaultPageSize: 5,
+                        pageSize: parseInt(pageSize),
+                        current: parseInt(pageNum),
                         showSizeChanger: true,
                         onChange: changePage,
                         total: total,
